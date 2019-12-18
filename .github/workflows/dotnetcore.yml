@@ -8,17 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: copy appsettings.json
-      run: cp appsettings.json.dist appsettings.json
-      
-    - name: copy appsettings.Development.json
-      run: cp appsettings.Development.json.dist appsettings.Development.json
-      
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
+          
+    - name: Copy appsettings.json
+      run: cp appsettings.json.dist appsettings.json
+      
+    - name: Copy appsettings.Development.json
+      run: cp appsettings.Development.json.dist appsettings.Development.json
         
     - name: Build with dotnet
       run: dotnet build --configuration Release
