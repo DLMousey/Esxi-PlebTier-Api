@@ -3,3 +3,5 @@ obj/
 /packages/
 .idea/
 Migrations/ApplicationDbContextModelSnapshot.cs
+appsettings.json
+appsettings.*.json
