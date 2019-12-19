@@ -5,3 +5,4 @@ obj/
 Migrations/ApplicationDbContextModelSnapshot.cs
 appsettings.json
 appsettings.*.json
+*.blob
