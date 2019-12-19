@@ -8,5 +8,11 @@
   },
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;User=root;Password=password;Database=dotnet_core_web_starter"
+  },
+  "ESXI": {
+    "host": "127.0.0.1",
+    "username": "YourEsxiUsername",
+    "port": 22,
+    "privateKeyPath": "/absolute/path/to/ssh/key"
   }
 }

@@ -23,15 +23,17 @@ namespace EsxiRestfulApi.Services.Implementation
         public string ExecuteCommand(string command)
         {
             string host = _config.GetValue<string>("ESXI:host");
-            string password = _config.GetValue<string>("ESXI:password");
+            string username = _config.GetValue<string>("ESXI:username");
+            string keyPath = _config.GetValue<string>("ESXI:privateKeyPath");
+            int port = _config.GetValue<int>("ESXI:port");
             
-            var pk = new PrivateKeyFile("/home/mousey/.ssh/esxi_pem_rsa");
+            var pk = new PrivateKeyFile(keyPath);
             var keyFiles = new[] {pk};
 
             var methods = new List<AuthenticationMethod>();
-            methods.Add(new PrivateKeyAuthenticationMethod("root", keyFiles));
+            methods.Add(new PrivateKeyAuthenticationMethod(username, keyFiles));
             
-            var connectionInfo = new ConnectionInfo(host, 22, "root", methods.ToArray());
+            var connectionInfo = new ConnectionInfo(host, port, username, methods.ToArray());
 
             using (var client = new SshClient(connectionInfo))
             {
