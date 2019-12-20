@@ -8,6 +8,7 @@ using EsxiRestfulApi.Database;
 using EsxiRestfulApi.Database.Models;
 using EsxiRestfulApi.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace EsxiRestfulApi.Services.Implementation
 {
@@ -15,11 +16,13 @@ namespace EsxiRestfulApi.Services.Implementation
     {
         private readonly ApplicationDbContext _context;
         private readonly ISSHService _sshService;
+        private readonly IConfiguration _config;
 
-        public VSwitchService(ApplicationDbContext context, ISSHService sshService)
+        public VSwitchService(ApplicationDbContext context, ISSHService sshService, IConfiguration config)
         {
             _context = context;
             _sshService = sshService;
+            _config = config;
         }
         
         public async Task<List<VSwitch>> FindAll()
@@ -59,10 +62,31 @@ namespace EsxiRestfulApi.Services.Implementation
                 currentSwitch.Uplinks = properties[11].Split(":")[1].Trim();
 
                 string[] portGroups = properties[12].Split(":")[1].Trim().Split(",");
+                foreach (var pGroup in portGroups)
+                {
+                    PortGroup search = await _context.PortGroups
+                        .Where(pg => pg.Name.Equals(pGroup))
+                        .FirstOrDefaultAsync();
+
+                    if (search == null)
+                    {
+                        PortGroup portGroup = new PortGroup
+                        {
+                            Name = pGroup.Trim(),
+                            VSwitchId = currentSwitch.Id,
+                            VSwitch = currentSwitch,
+                            ActiveClients = 0,
+                            VLANId = 0
+                        };
+                        
+                        await _context.AddAsync(portGroup);
+                    }
+                }
                 
                 vSwitches.Add(currentSwitch);
             }
             
+            Dictionary<int, VSwitch> replacements = new Dictionary<int, VSwitch>();
             foreach (var swtch in vSwitches)
             {
                 VSwitch search =
@@ -71,10 +95,20 @@ namespace EsxiRestfulApi.Services.Implementation
                 if (search == null)
                 {
                     await _context.AddAsync(swtch);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    int index = vSwitches.FindIndex(vs => vs.Name.Equals(swtch.Name));
+                    replacements.Add(index, search);
                 }
             }
 
-            await _context.SaveChangesAsync();
+            foreach (var replacement in replacements)
+            {
+                vSwitches[replacement.Key] = replacement.Value;
+            }
+            
             return vSwitches;
         }
     }

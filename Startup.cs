@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace EsxiRestfulApi
 {
@@ -34,9 +35,13 @@ namespace EsxiRestfulApi
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             });
             
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(opt => 
+                    opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                );
 
             services.AddScoped<IVSwitchService, VSwitchService>();
+            services.AddScoped<IPortGroupService, PortGroupService>();
             services.AddScoped<ISSHService, SSHService>();
         }
 
