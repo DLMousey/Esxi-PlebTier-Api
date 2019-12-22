@@ -8,6 +8,7 @@ namespace EsxiRestfulApi.Database
         public DbSet<VSwitch> VSwitches { get; set; }
         public DbSet<PortGroup> PortGroups { get; set; }
         public DbSet<Filesystem> Filesystems { get; set; }
+        public DbSet<VirtualMachine> VMs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
