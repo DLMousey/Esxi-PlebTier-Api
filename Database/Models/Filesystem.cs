@@ -13,10 +13,12 @@ namespace EsxiRestfulApi.Database.Models
 
         public string VolumeName { get; set; }
 
-        public Guid Uuid { get; set; }
+        public string Uuid { get; set; }
 
         public bool Mounted { get; set; }
 
         public string Type { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

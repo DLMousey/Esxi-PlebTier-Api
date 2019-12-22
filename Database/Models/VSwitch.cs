@@ -32,5 +32,7 @@ namespace EsxiRestfulApi.Database.Models
         public string Uplinks { get; set; }
 
         public ICollection<PortGroup> PortGroups { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

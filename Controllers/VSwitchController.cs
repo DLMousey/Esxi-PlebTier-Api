@@ -19,7 +19,7 @@ namespace EsxiRestfulApi.Controllers
         
         public async Task<IActionResult> GetList()
         {
-            List<VSwitch> vSwitches = await _vSwitchService.GetAll();
+            List<VSwitch> vSwitches = await _vSwitchService.FindAll();
 
             if (vSwitches.Count == 0)
             {

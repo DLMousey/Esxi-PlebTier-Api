@@ -27,7 +27,30 @@ namespace EsxiRestfulApi.Services.Implementation
         
         public async Task<List<VSwitch>> FindAll()
         {
-            return await _context.VSwitches.ToListAsync();
+            DateTime now = DateTime.Now;
+            bool updateRecords = false;
+            
+            /*
+             * Pull the list of vSwitches out of the database, check if any of the values are older
+             * than the ageThreshold specified in appsettings.json, if any of the records are older than
+             * this max, we'll retrieve a fresh list from the host and update the database.
+             */
+            List<VSwitch> vSwitches = await _context.VSwitches.ToListAsync();
+            foreach (var swtch in vSwitches)
+            {
+                var diff = now.Subtract(swtch.CreatedAt).TotalDays;
+                if (diff > _config.GetValue<double>("ESXI:ageThreshold"))
+                {
+                    updateRecords = true;
+                }
+            }
+
+            if (updateRecords)
+            {
+                return await GetAll();
+            }
+
+            return vSwitches;
         }
 
         public async Task<List<VSwitch>> GetAll()

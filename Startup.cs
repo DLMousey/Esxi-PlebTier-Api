@@ -42,6 +42,7 @@ namespace EsxiRestfulApi
 
             services.AddScoped<IVSwitchService, VSwitchService>();
             services.AddScoped<IPortGroupService, PortGroupService>();
+            services.AddScoped<IFilesystemService, FilesystemService>();
             services.AddScoped<ISSHService, SSHService>();
         }
 
